@@ -40,3 +40,21 @@ ggplot(data = chinooks, aes(x = Year, y = Chinook_Days)) +
 
 # Check Significance of post-1960 linear regressions
 summary(lm(data = subset(chinooks, Year > 1959), formula = Year~Chinook_Days))
+summary(lm(data = subset(chinooks, Year > 1939), formula = Year~Chinook_Days))
+
+
+# Mann-Kendall Tests
+library('Kendall')
+MannKendall(chinooks$Chinook_Days)
+MannKendall(chinooks$Chinook_Days[chinooks$Year<1960])
+MannKendall(chinooks$Chinook_Days[chinooks$Year>1959])
+
+# test 10 year periods: 
+minyear = seq(1910,1990,10)
+pval = c()
+tau = c()
+for (i in 1:length(minyear)){
+  pval[i] = MannKendall(chinooks$Chinook_Days[chinooks$Year>minyear[i]])$sl
+  tau[i] = MannKendall(chinooks$Chinook_Days[chinooks$Year>minyear[i]])$tau
+}
+data.frame(minyear, tau, pval)
